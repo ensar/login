@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { api } from './util/api';
+import { api } from '../util/api';
+import { toast } from 'react-toastify';
 
 function Signup() {
   const [mail, setMail] = useState();
@@ -12,9 +13,20 @@ function Signup() {
     await api()
       .post('/user/signup', { name, mail, password })
       .then((res) => {
+        toast('Kayıt olundu', {
+          type: 'success',
+          position: 'top-right',
+          autoClose: 1000,
+        });
         navigate('/login');
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        toast(err.response.data.message, {
+          type: 'error',
+          position: 'top-right',
+          autoClose: 1000,
+        });
+      });
   };
   return (
     <>
@@ -54,7 +66,7 @@ function Signup() {
                 onChange={(e) => setPassword(e.target.value)}
               ></input>
             </div>
-            <button type='submit'>Giriş Yap</button>
+            <button type='submit'>Kaydol</button>
             <div>
               <p>Hesabın var mı?</p>
               <Link to={'/login'}>Giriş Yap</Link>

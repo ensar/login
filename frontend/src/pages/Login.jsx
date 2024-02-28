@@ -1,8 +1,32 @@
 import { useState } from 'react';
+import { api } from '../util/api';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 function Login() {
   const [mail, setMail] = useState();
   const [pass, setPass] = useState();
+  const navigate = useNavigate();
+
+  const login = async (mail, password) => {
+    await api()
+      .post('/user/login', { mail, password })
+      .then((res) => {
+        toast('Giriş yapıldı', {
+          type: 'success',
+          position: 'top-right',
+          autoClose: 1000,
+        });
+        navigate('/');
+      })
+      .catch((err) =>
+        toast(err.response.data.message, {
+          type: 'error',
+          position: 'top-right',
+          autoClose: 1000,
+        })
+      );
+  };
   return (
     <>
       <div className='container'>
@@ -11,7 +35,7 @@ function Login() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              console.log(mail, pass);
+              login(mail, pass);
             }}
           >
             <div className='formItem'>
@@ -27,7 +51,7 @@ function Login() {
               <label htmlFor='pass'>Şifre</label>
               <input
                 type='password'
-                name='mail'
+                name='password'
                 id='pass'
                 onChange={(e) => setPass(e.target.value)}
               ></input>
